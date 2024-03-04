@@ -122,7 +122,7 @@ int main(void)
         fclose(sum_file);
 
         // Print total sum
-        printf("Total sum: %d\n", total_sum);
+        printf("Final Total sum: %d\n", total_sum);
 
         // Destroy semaphore
         sem_destroy(&semaphore);
