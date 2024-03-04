@@ -6,38 +6,39 @@
  *
 */
 #define _XOPEN_SOURCE 700 // required for barriers to work
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <sys/wait.h>
-
-int main(void)
-{
+/*
+Parent Process
+|--- Child Process 1
+|    |--- Sleeps for 1 sec
+|    |--- Prints "Child Process"
+|-Waits for child
+|-Prints "Parent Process"
+*/
+int main() {
     pid_t pid;
 
-    // Fork a child process
     pid = fork();
-    // Error case for failing fork
+
     if (pid < 0) {
-        perror("Fork failed");
-        exit(EXIT_FAILURE);
+        fprintf(stderr, "Fork failed\n");
+        return 1;
     } else if (pid == 0) {
         // Child process
         sleep(1);
         printf("Child process\n");
-        exit(EXIT_SUCCESS);
+        exit(0); // Child process exits normally
     } else {
         // Parent process
         int status;
-        wait(&status); // Wait for the child process to terminate
-
-        if (WIFEXITED(status)) {
-            printf("Child process exited with status: %d\n", WEXITSTATUS(status));
-        } else {
+        wait(&status); // Parent waits for the child to terminate
+        if (!WIFEXITED(status)) { //Error Case
             printf("Child process terminated abnormally\n");
         }
-
-        printf("Parent Process\n");
+        printf("Parent process\n");
     }
 
     return 0;
